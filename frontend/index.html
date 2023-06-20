@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Chat UI Screen</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <style>
+        @font-face {
+            font-family: 'omyu_pretty';
+            src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2304-01@1.0/omyu_pretty.woff2') format('woff2');
+            font-weight: normal;
+            font-style: normal;
+        }
+        
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'omyu_pretty', Tahoma, Geneva, Verdana, sans-serif;
+            font-size: 14px;
+            background-image: url('abs_bg.jpg');
+            background-size: cover;
+            background-repeat: no-repeat;
+        }
+
+        .chat-container {
+            max-width: 500px;
+            margin: 1.5rem auto;
+            padding: 20px;
+            background-color: #ffffff;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+        }
+
+        .chat-box {
+            background-color: #f2f2f2;
+            padding: 10px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            overflow-y: scroll;
+            height: 300px;
+        }
+
+        .chat-message {
+            background-color: #ffffff;
+            padding: 10px;
+            border-radius: 10px;
+            margin-bottom: 10px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .chat-message p {
+            margin: 0;
+            padding: 0;
+        }
+
+        .chat-input {
+            display: flex;
+            margin-top: 20px;
+        }
+
+        .chat-input input {
+            flex: 1;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            margin-right: 10px;
+            background-color: #f2f2f2;
+        }
+
+        .chat-input button {
+            background-color: #4CAF50;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .chat-input button:hover {
+            background-color: #45a049;
+        }
+
+        .assistant {
+            color: rgb(69, 146, 176);
+        }
+
+        .chat-wrapper {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .chat-wrapper img {
+            width: 15%;
+            min-width: 200px;
+            margin-bottom: 10px;
+        }
+
+        .chat-box-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-top: 1rem;
+        }
+
+        .start-btn {
+            padding: 0.5rem 1rem;
+            margin-top: 1rem;
+            background-color: rgb(69, 146, 176);
+            color: white;
+            border: none;
+            border-radius: 0.2rem;
+            font-size: 14px;
+            cursor: pointer;
+        }
+
+        #hours,
+        #date {
+            border: 2px solid black;
+            border-radius: 1rem;
+            padding: 0.2rem 0.8rem;
+            margin: 0.5rem 2rem;
+        }
+
+        #spinner {
+            font-size: 25px;
+            text-align: center;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="chat-wrapper">
+        <h1>꿈 해몽을 도와드리겠습니다.</h1>
+        <img src="dreamduck.png" alt="dreamduck">
+        <div id="intro" class="chat-container">
+            <div class="chat-box-container">
+                <label for="date">생년월일</label>
+                <input id="date" type="date">
+                <label for="hours">태어난 시간</label>
+                <select id="hours" name="hours">
+                    <option value="">모름</option>
+                    <option value="00">00</option>
+                    <option value="01">01</option>
+                    <option value="02">02</option>
+                    <option value="03">03</option>
+                    <option value="04">04</option>
+                    <option value="05">05</option>
+                    <option value="06">06</option>
+                    <option value="07">07</option>
+                    <option value="08">08</option>
+                    <option value="09">09</option>
+                    <option value="10">10</option>
+                    <option value="11">11</option>
+                    <option value="12">12</option>
+                    <option value="13">13</option>
+                    <option value="14">14</option>
+                    <option value="15">15</option>
+                    <option value="16">16</option>
+                    <option value="17">17</option>
+                    <option value="18">18</option>
+                    <option value="19">19</option>
+                    <option value="20">20</option>
+                    <option value="21">21</option>
+                    <option value="22">22</option>
+                    <option value="23">23</option>
+                    <option value="24">24</option>
+                </select>
+                <button class="start-btn" onclick="start()">내 꿈을 해석해주세요</button>
+            </div>
+        </div>
+        <div id="chat" class="chat-container" style="display: none;">
+            <div class="chat-box">
+                <div class="chat-message">
+                    <p class="assistant">당신의 꿈을 들려주세요!</p>
+                </div>
+            </div>
+            <div id="spinner" class="loader" style="display: none;">
+                <i class="fa fa-spinner fa-spin"></i>
+            </div>
+            <div class="chat-input">
+                <input type="text" placeholder="메시지를 입력하세요...">
+                <button id="send" onclick="spinner()">보내기</button>
+            </div>
+        </div>
+    </div>
+    <script>
+        const chatBox = document.querySelector('.chat-box');
+        let userMessages = [];
+        let assistantMessages = [];
+        let myDateTime = '';
+
+        function spinner() {
+            document.getElementById('spinner').style.display = "block";
+        }
+
+        function start() {
+            const date = document.getElementById('date').value;
+            const hours = document.getElementById('hours').value;
+            if (date === '') {
+                alert('생년월일을 입력해주세요.');
+                return;
+            }
+            myDateTime = date;
+            console.log(myDateTime);
+
+            document.getElementById("intro").style.display = "none";
+            document.getElementById("chat").style.display = "block";
+        }
+
+        const sendMessage = async () => {
+            const chatInput = document.querySelector('.chat-input input');
+            const chatMessage = document.createElement('div');
+            chatMessage.classList.add('chat-message');
+            chatMessage.innerHTML = `
+    <p>${chatInput.value}</p>
+  `;
+            chatBox.appendChild(chatMessage);
+
+            //userMessage 메세지 추가
+            userMessages.push(chatInput.value);
+
+            chatInput.value = '';
+
+            const response = await fetch('http://localhost:3000/dreamTell', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    myDateTime: myDateTime,
+                    userMessages: userMessages,
+                    assistantMessages: assistantMessages,
+                })
+            });
+
+            const data = await response.json();
+            document.getElementById('spinner').style.display = "none";
+
+            //assistantMessage 메세지 추가
+            assistantMessages.push(data.assistant);
+
+            const astrologerMessage = document.createElement('div');
+            astrologerMessage.classList.add('chat-message');
+            astrologerMessage.innerHTML = `
+    <p class='assistant'>${data.assistant}</p>
+  `;
+            chatBox.appendChild(astrologerMessage);
+        };
+
+        document.querySelector('.chat-input button').addEventListener('click', sendMessage);
+    </script>
+</body>
+</html>
